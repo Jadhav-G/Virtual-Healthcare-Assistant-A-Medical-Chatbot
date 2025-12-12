@@ -1,0 +1,270 @@
+<!-- templates/chat.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chat - MediQA Chatbot</title>
+
+  <!-- use your main stylesheet -->
+  <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> -->
+   <link rel="stylesheet" href="style.css">
+
+      <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🩺</text></svg>">
+
+
+  <!-- small overrides to get the exact layout you asked for -->
+  <style>
+    /* Make chat history (sidebar) slightly narrower like old version */
+    .chat-sidebar {
+      width: 260px !important; /* reduced width */
+    }
+
+    /* Keep sidebar content scrollable and compact */
+    .chat-history .history-list {
+      max-height: calc(100vh - 220px);
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    .history-item {
+      padding: 10px;
+      border-radius: 10px;
+      transition: all 0.18s;
+    }
+    .history-item:hover {
+      transform: translateX(6px);
+      background: rgba(13,202,240,0.05);
+    }
+
+    /* Chat messages area tweaks */
+    .chat-messages {
+      padding: 1.6rem;
+    }
+
+    /* Ensure user message align right and bot left */
+    .message {
+      display: flex;
+      gap: 0.8rem;
+      align-items: flex-start;
+      margin: 0.6rem 0;
+      animation: slide-up 0.25s ease-out;
+    }
+
+    .user-message { flex-direction: row-reverse; } /* user on right */
+    .bot-message  { flex-direction: row; }         /* bot on left */
+
+    .message-avatar { width:45px; height:45px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; }
+    .bot-avatar { background: linear-gradient(135deg,#0dcaf0,#007bff); color: white; box-shadow: 0 0 18px rgba(13,202,240,0.2); }
+    .user-avatar { background: linear-gradient(135deg,#007bff,#0dcaf0); color: white; box-shadow: 0 0 18px rgba(0,123,255,0.15); }
+
+    .message-content {
+      max-width: 75%;
+      padding: 12px 14px;
+      border-radius: 16px;
+      line-height: 1.5;
+    }
+    .user-message .message-content { background: rgba(0,123,255,0.95); color: #fff; border-radius: 16px 16px 12px 16px; }
+    .bot-message .message-content  { background: rgba(255,255,255,0.06); color: var(--text-light, #e0e7ff); border-radius: 16px 16px 16px 12px; }
+
+    /* typing indicator small tweak so it doesn't jump layout */
+    .thinking { opacity: 0.9; }
+
+    /* Restore older style chat input (rounded pill with border) */
+    .chat-input-container {
+      padding: 1.2rem 1.6rem;
+      background: rgba(10,25,41,0.95);
+      border-top: 2px solid rgba(13,202,240,0.06);
+    }
+
+    .chat-input-form {
+      display: flex;
+      gap: 0.8rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 0.95rem 1rem;
+      border-radius: 28px;
+      border: 2px solid rgba(13,202,240,0.22);
+      background: rgba(255,255,255,0.02);
+      color: var(--white, #fff);
+      font-size: 1rem;
+    }
+
+    .send-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg,#0dcaf0,#007bff);
+      border: none;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    }
+
+    @media (max-width: 768px) {
+      .chat-sidebar { width: 100%; max-height: 180px; }
+      .chat-container { flex-direction: column; }
+      .chat-messages { padding: 1rem; }
+    }
+  </style>
+</head>
+<body class="chat-page">
+  <div class="chat-container">
+    <!-- Sidebar -->
+    <aside class="chat-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          <span class="medical-icon">⚕️</span>
+          <span>MediQA</span>
+        </div>
+      </div>
+
+      <!-- Chat history (from DB) -->
+      <div class="chat-history">
+        <h3 class="history-title">Chat History</h3>
+        <div class="history-list">
+          {% if chats %}
+            {% for chat in chats %}
+              <div class="history-item" onclick="window.location.href='{{ url_for('chat_view', chat_id=chat['id']) }}'">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div style="display:flex;gap:10px;align-items:center;">
+                    <div class="history-icon">💬</div>
+                    <div class="history-content">
+                      <p class="history-text" style="margin:0;font-weight:600;">{{ chat['title'] }}</p>
+                      <small class="history-time" style="color:rgba(224,231,255,0.6);">{{ chat['created_at'] }}</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p class="no-history">No chat history available yet.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="sidebar-footer" style="padding-top:12px;">
+        <a href="{{ url_for('logout') }}" class="logout-btn" style="display:inline-block;padding:8px 12px;border-radius:10px;background:rgba(255,0,0,0.06);color:#ff6b6b;text-decoration:none;">🚪 Logout</a>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="chat-main" style="flex:1;display:flex;flex-direction:column;min-height:100vh;">
+      <div class="chat-header" style="padding:1.2rem 1.6rem;background:rgba(10,25,41,0.95);border-bottom:2px solid rgba(13,202,240,0.06);display:flex;justify-content:space-between;align-items:center;">
+        <h2 class="chat-title" style="margin:0;background:var(--gradient-1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">AI Health Assistant</h2>
+        <button class="new-chat-btn" onclick="window.location.href='{{ url_for('new_chat') }}'">
+          <span>➕</span> New Chat
+        </button>
+      </div>
+
+      <!-- Messages -->
+      <div id="chat-box" class="chat-messages" style="flex:1;overflow-y:auto;">
+        {% if messages %}
+          {% for msg in messages %}
+            {# Each row contains both question and answer (based on your DB schema) #}
+            {% if msg['question'] %}
+              <div class="message user-message">
+                <div class="message-content"><p style="margin:0;">{{ msg['question'] }}</p></div>
+                <div class="message-avatar user-avatar">👤</div>
+              </div>
+            {% endif %}
+            {% if msg['answer'] %}
+              <div class="message bot-message">
+                <div class="message-avatar bot-avatar">🤖</div>
+                <div class="message-content"><p style="margin:0;">{{ msg['answer'] }}</p></div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          <div class="message bot-message">
+            <div class="message-avatar bot-avatar">🤖</div>
+            <div class="message-content">
+              <p>Hello! I'm your AI Health Assistant. How can I help you today?</p>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Input -->
+      <div class="chat-input-container">
+        <form id="chat-form" class="chat-input-form">
+          <input type="text" id="question" class="chat-input" placeholder="Type your health question here..." autocomplete="off" required />
+          <button type="submit" class="send-btn"><span class="send-icon">📤</span></button>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const form = document.getElementById("chat-form");
+      const input = document.getElementById("question");
+      const chatBox = document.getElementById("chat-box");
+
+      const chatId = "{{ current_chat_id if current_chat_id else '' }}";
+
+      if (!form || !input || !chatBox) return;
+
+      form.addEventListener("submit", async function(e) {
+        e.preventDefault();
+        const question = input.value.trim();
+        if (!question) return;
+
+        const userDiv = document.createElement("div");
+        userDiv.className = "message user-message";
+        userDiv.innerHTML = `<div class="message-content"><p style="margin:0;">${escapeHtml(question)}</p></div><div class="message-avatar user-avatar">👤</div>`;
+        chatBox.appendChild(userDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        input.value = "";
+
+        const typing = document.createElement("div");
+        typing.className = "message bot-message thinking";
+        typing.innerHTML = `<div class="message-avatar bot-avatar">🤖</div><div class="message-content"><div class="typing-indicator"><span></span><span></span><span></span></div><p class="thinking-text">Thinking...</p></div>`;
+        chatBox.appendChild(typing);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        try {
+          const res = await fetch("https://backend-chatbot-h3ui.onrender.com/ask", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ question, chat_id: chatId })
+          });
+
+          const data = await res.json();
+
+          chatBox.removeChild(typing);
+
+          const botDiv = document.createElement("div");
+          botDiv.className = "message bot-message";
+          botDiv.innerHTML = `<div class="message-avatar bot-avatar">🤖</div><div class="message-content"><p style="margin:0;">${escapeHtml(data.answer)}</p></div>`;
+          chatBox.appendChild(botDiv);
+          chatBox.scrollTop = chatBox.scrollHeight;
+
+        } catch (err) {
+          console.error(err);
+          if (typing.parentNode) typing.parentNode.removeChild(typing);
+          const errDiv = document.createElement("div");
+          errDiv.className = "message bot-message";
+          errDiv.innerHTML = `<div class="message-avatar bot-avatar">🤖</div><div class="message-content"><p style="margin:0;">⚠️ Error. Try again.</p></div>`;
+          chatBox.appendChild(errDiv);
+        }
+      });
+
+      function escapeHtml(text) {
+        return text.replace(/[&<>"'`=\/]/g, function (s) {
+          return {
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;',
+            "'": '&#39;', '/': '&#x2F;', '`': '&#x60;', '=': '&#x3D;'
+          }[s];
+        });
+      }
+    });
+</script>
+
+</body>
+</html>
