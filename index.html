@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediQA Chatbot - Your AI Health Assistant</title>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🩺</text></svg>">
+
+
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="medical-icon">⚕️</span>
+                <span class="brand-text">MediQA Chatbot</span>
+            </div>
+            <div class="nav-menu">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#developers" class="nav-link">About</a>
+                <a href="#tips" class="nav-link">Services</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </div>
+            <div class="nav-buttons">
+                <!-- <a href="login.html" class="btn-login">Login</a>
+                <a href="signup.html" class="btn-signup">Sign Up</a> -->
+                <a href="{{ url_for('login') }}" class="btn-login">Login</a>
+<a href="{{ url_for('signup') }}" class="btn-signup">Sign Up</a>
+
+            </div>
+        </div>
+    </nav>
+
+    <div class="floating-icons">
+        <span class="float-icon icon-1">🩺</span>
+        <span class="float-icon icon-2">💊</span>
+        <span class="float-icon icon-3">❤️</span>
+        <span class="float-icon icon-4">🧬</span>
+        <span class="float-icon icon-5">💉</span>
+    </div>
+
+    <section class="hero-section" id="home">
+        <div class="hero-content">
+            <div class="hero-image">
+                <div class="ai-bot-illustration">
+                    <div class="doctor-hat"></div>
+                    <div class="bot-head">
+                        <div class="bot-eye left"></div>
+                        <div class="bot-eye right"></div>
+                        <div class="bot-antenna"></div>
+                    </div>
+                    <div class="bot-body">
+                        <div class="stethoscope"></div>
+                    </div>
+                    <div class="pulse-ring"></div>
+                </div>
+            </div>
+            <div class="hero-text">
+                <h2 class="animated-heading">
+                  <span class="typing-text">I am AI Health Assistant</span>
+                    <span class="subtext">Smart, Reliable & Caring.</span>
+                </h2>
+                <p class="hero-description">Experience the future of healthcare with our intelligent chatbot powered by advanced AI technology.</p>
+            </div>
+        </div>
+    </section>
+     <!-- <section class="hero-section" id="home">
+        <div class="hero-content">
+            <div class="hero-image">
+                <div class="ai-bot-illustration">
+                    <div class="doctor-hat"></div>
+                    <div class="bot-head">
+                        <div class="bot-eye left"></div>
+                        <div class="bot-eye right"></div>
+                        <div class="bot-antenna"></div>
+                    </div>
+                    <div class="bot-body">
+                        <div class="stethoscope"></div>
+                    </div>
+                    <div class="pulse-ring"></div>
+                </div>
+            </div>
+            <div class="hero-text">
+                <h1 class="animated-heading">
+                    <span class="typing-text">Your AI Health Assistant</span>
+                    <span class="subtext">Smart, Reliable & Caring.</span>
+                </h1>
+                <p class="hero-description">Experience the future of healthcare with our intelligent chatbot powered by advanced AI technology.</p>
+            </div>
+        </div>
+    </section> -->
+
+    <section class="health-tips-section" id="tips">
+        <h2 class="section-title">Daily Health Tips</h2>
+        <div class="tips-grid">
+            <div class="tip-card card-1">
+                <span class="tip-icon icon-tilt">💧</span>
+                <p class="tip-text">Stay hydrated</p>
+                <div class="card-line line-1"></div>
+            </div>
+            <div class="tip-card card-2">
+                <span class="tip-icon icon-tilt">🥗</span>
+                <p class="tip-text">Eat balanced meals</p>
+                <div class="card-line line-2"></div>
+            </div>
+            <div class="tip-card card-3">
+                <span class="tip-icon icon-tilt">🏃</span>
+                <p class="tip-text">Exercise daily</p>
+                <div class="card-line line-3"></div>
+            </div>
+            <div class="tip-card card-4">
+                <span class="tip-icon icon-tilt">😴</span>
+                <p class="tip-text">Sleep well</p>
+                <div class="card-line line-4"></div>
+            </div>
+            <div class="tip-card card-5">
+                <span class="tip-icon icon-tilt">🧘</span>
+                <p class="tip-text">Avoid stress</p>
+                <div class="card-line line-5"></div>
+            </div>
+            <div class="tip-card card-6">
+                <span class="tip-icon icon-tilt">🖐️</span>
+                <p class="tip-text">Wash hands often</p>
+                <div class="card-line line-6"></div>
+            </div>
+            <div class="tip-card card-7">
+                <span class="tip-icon icon-tilt">💆</span>
+                <p class="tip-text">Take breaks</p>
+                <div class="card-line line-7"></div>
+            </div>
+            <div class="tip-card card-8">
+                <span class="tip-icon icon-tilt">🩺</span>
+                <p class="tip-text">Monitor health</p>
+                <div class="card-line line-8"></div>
+            </div>
+            <div class="tip-card card-9">
+                <span class="tip-icon icon-tilt">😊</span>
+                <p class="tip-text">Smile often</p>
+                <div class="card-line line-9"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- <section class="developer-section" id="developers">
+        <h2 class="section-title">Meet Our Team</h2>
+        <div class="team-container">
+            <div class="developer-card team-leader">
+                <div class="dev-avatar">TL</div>
+                <h3 class="dev-name">Team Leader</h3>
+                <p class="dev-role">Project Lead & AI Architect</p>
+            </div>
+            <div class="developers-row">
+                <div class="developer-card">
+                    <div class="dev-avatar">D1</div>
+                    <h3 class="dev-name">Developer 1</h3>
+                    <p class="dev-role">Full Stack Developer</p>
+                </div>
+                <div class="developer-card">
+                    <div class="dev-avatar">D2</div>
+                    <h3 class="dev-name">Developer 2</h3>
+                    <p class="dev-role">AI/ML Engineer</p>
+                </div>
+            </div>
+        </div>
+    </section> -->
+
+    <section class="developer-section" id="developers">
+  <h2 class="section-title">Meet Our Team</h2>
+  <div class="team-container">
+    <div class="developer-card team-leader">
+      <div class="dev-avatar">
+<img src="{{ url_for('static', filename='developer.jpg') }}" alt="Team Leader" class="developer-img">
+      </div>
+      <h3 class="dev-name">Team Leader</h3>
+      <p class="dev-role">Ganesh Namdev Jadhav</p>
+    </div>
+
+<div class="social-title">Connect With Me</div>
+
+<!-- Add this once in your <head> (if you don't already have Font Awesome) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- Paste this inside your developer-card (below name/role) -->
+<div class="social-icons">
+  <a href="https://www.linkedin.com/in/ganesh-jadhav-956b6131b/" class="icon-circle" target="_blank" aria-label="LinkedIn">
+    <i class="fab fa-linkedin-in"></i>
+  </a>
+
+  <a href="https://www.youtube.com/channel/UC9R0yfa5KBwOuuQZpAR74lQ" class="icon-circle" target="_blank" aria-label="YouTube">
+    <i class="fab fa-youtube"></i>
+  </a>
+
+  <a href="https://github.com/Jadhav-G" class="icon-circle" target="_blank" aria-label="GitHub">
+    <i class="fab fa-github"></i>
+  </a>
+
+  <a href="https://www.instagram.com/ganujadhav2127?igsh=MXRtYmwyZmY0Z2F0MA==" class="icon-circle" target="_blank" aria-label="Instagram">
+    <i class="fab fa-instagram"></i>
+  </a>
+
+</div>
+
+<!-- Add this CSS (inside your <style> or CSS file) -->
+<style>
+
+.social-title {
+    margin-top: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #00eaff;
+    text-align: center;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+        margin-bottom: -15px;   /* reduced from 6px */
+
+}
+    
+.social-icons {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: -10px;
+
+}
+
+.icon-circle{
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #0d2d4d;         /* match card blue */
+    border: 2px solid rgba(0,234,255,0.18);
+    color: #00eaff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    text-decoration: none;
+    transition: transform .22s ease, box-shadow .22s ease, background .22s ease, color .22s ease;
+}
+
+.icon-circle i { pointer-events: none; } /* ensures hover on link */
+
+.icon-circle:hover{
+    background: #00eaff;         /* fill with accent on hover */
+    color: #0d2d4d;              /* icon becomes dark */
+    transform: translateY(-4px) scale(1.08);
+    box-shadow: 0 6px 18px rgba(0,234,255,0.26);
+}
+</style>
+
+
+
+    <div class="developers-row">
+      <div class="developer-card">
+        <div class="dev-avatar">
+<img src="{{ url_for('static', filename='developer1.jpg') }}" alt="Developer 1" class="developer-img">
+        </div>
+        <h3 class="dev-name">Developer 1</h3>
+        <p class="dev-role">Ayush Anil Hajare</p>
+      </div>
+
+      <div class="developer-card">
+        <div class="dev-avatar">
+<img src="{{ url_for('static', filename='deveoper 2.jpg') }}" alt="Developer 2" class="developer-img">
+        </div>
+        <h3 class="dev-name">Developer 2</h3>
+        <p class="dev-role">Digvijay D Patil</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+    <footer class="footer" id="contact">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3 class="footer-heading">Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#developers">About</a></li>
+                    <li><a href="#tips">Services</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-heading">Contact Info</h3>
+                <ul class="footer-info">
+                    <li>📧 support@mediqa.com</li>
+                    <li>📞 +1 (555) 123-4567</li>
+                    <li>📍 123 Health St, Medical City</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-heading">About MediQA</h3>
+                <p class="footer-text">Your trusted AI-powered health assistant, providing reliable medical information and support 24/7.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 MediQA Chatbot  |<span class="footer-author">     Ganesh Namdev Jadhav</span>  |   All rights reserved.</p>
+            <style>
+.footer-author {
+    color: #00bfff; 
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.footer-author:hover {
+    color: #FFA500; /* Hover झाल्यावर orange */
+    text-shadow: 0 0 10px #FFA500;
+}
+</style>
+
+        </div>
+    </footer>
+    <script src="{{ url_for('static', filename='javascript.js') }}"></script>
+</body>
+</html>
