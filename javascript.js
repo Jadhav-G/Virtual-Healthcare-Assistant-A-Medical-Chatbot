@@ -186,8 +186,6 @@
 // }
 
 
-
-
 const API_URL = "https://medical-chatbot-j5p5.onrender.com";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -197,73 +195,72 @@ document.addEventListener("DOMContentLoaded", () => {
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     const question = input.value.trim();
     if (!question) return;
 
-    addMessage(question, "user");
+    // User message
+    chatBox.innerHTML += `
+      <div class="message user-message">
+        <div class="message-content">${escapeHtml(question)}</div>
+      </div>
+    `;
+    chatBox.scrollTop = chatBox.scrollHeight;
     input.value = "";
 
-    const typing = addTyping();
+    // Thinking indicator
+    const thinking = document.createElement("div");
+    thinking.className = "message bot-message";
+    thinking.innerHTML = `<div class="message-content">Thinking...</div>`;
+    chatBox.appendChild(thinking);
+    chatBox.scrollTop = chatBox.scrollHeight;
 
     try {
-      const res = await fetch(`${API_URL}/chat`, {
+      const response = await fetch(`${API_URL}/ask`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: question })
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ question })
       });
 
-      const data = await res.json();
-      typing.remove();
+      if (!response.ok) {
+        throw new Error("API error");
+      }
 
-      addMessage(data.reply, "bot");
+      const data = await response.json();
+      thinking.remove();
+
+      chatBox.innerHTML += `
+        <div class="message bot-message">
+          <div class="message-content">${escapeHtml(data.answer)}</div>
+        </div>
+      `;
+      chatBox.scrollTop = chatBox.scrollHeight;
 
     } catch (error) {
-      typing.remove();
-      addMessage(
-        "Server is not responding. Please try again.",
-        "bot"
-      );
+      thinking.remove();
+      chatBox.innerHTML += `
+        <div class="message bot-message">
+          <div class="message-content">
+            Server is not responding. Please try again.
+          </div>
+        </div>
+      `;
     }
   });
 });
 
-// ---------------- Helpers ----------------
-
-function addMessage(text, sender) {
-  const chatBox = document.getElementById("chat-box");
-
-  const div = document.createElement("div");
-  div.className = `message ${sender}-message`;
-  div.innerHTML = `
-    <div class="message-avatar">${sender === "bot" ? "🤖" : "👤"}</div>
-    <div class="message-content"><p>${escapeHtml(text)}</p></div>
-  `;
-
-  chatBox.appendChild(div);
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-function addTyping() {
-  const chatBox = document.getElementById("chat-box");
-
-  const div = document.createElement("div");
-  div.className = "message bot-message thinking";
-  div.innerHTML = `
-    <div class="message-avatar">🤖</div>
-    <div class="message-content">
-      <p>Thinking...</p>
-    </div>
-  `;
-
-  chatBox.appendChild(div);
-  chatBox.scrollTop = chatBox.scrollHeight;
-  return div;
-}
-
 function escapeHtml(text) {
-  return text.replace(/[&<>"'`=\/]/g, s => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;',
-    "'": '&#39;', '/': '&#x2F;', '`': '&#x60;', '=': '&#x3D;'
-  }[s]));
+  return text.replace(/[&<>"']/g, function (m) {
+    return {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[m];
+  });
 }
+
 
