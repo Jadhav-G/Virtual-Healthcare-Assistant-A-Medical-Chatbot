@@ -185,6 +185,10 @@
 //   }[s]));
 // }
 
+
+
+
+
 const API_URL = "https://medical-chatbot-j5p5.onrender.com";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -207,7 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
     input.value = "";
 
     try {
-      const response = await fetch(`${API_URL}/ask`, {
+      const response = await fetch(`${API_URL}/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -215,11 +219,11 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify({ question })
       });
 
-      console.log("HTTP Status:", response.status);
+      if (!response.ok) {
+        throw new Error("HTTP error " + response.status);
+      }
 
       const data = await response.json();
-      console.log("Response:", data);
-
       chatBox.innerHTML += `<div><b>Bot:</b> ${escapeHtml(data.answer)}</div>`;
 
     } catch (err) {
