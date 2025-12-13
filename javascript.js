@@ -185,7 +185,6 @@
 //   }[s]));
 // }
 
-
 const API_URL = "https://medical-chatbot-j5p5.onrender.com";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -193,27 +192,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("question");
   const chatBox = document.getElementById("chat-box");
 
+  if (!form || !input || !chatBox) {
+    console.error("HTML IDs missing");
+    return;
+  }
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const question = input.value.trim();
     if (!question) return;
 
-    // User message
-    chatBox.innerHTML += `
-      <div class="message user-message">
-        <div class="message-content">${escapeHtml(question)}</div>
-      </div>
-    `;
-    chatBox.scrollTop = chatBox.scrollHeight;
+    chatBox.innerHTML += `<div><b>You:</b> ${escapeHtml(question)}</div>`;
     input.value = "";
-
-    // Thinking indicator
-    const thinking = document.createElement("div");
-    thinking.className = "message bot-message";
-    thinking.innerHTML = `<div class="message-content">Thinking...</div>`;
-    chatBox.appendChild(thinking);
-    chatBox.scrollTop = chatBox.scrollHeight;
 
     try {
       const response = await fetch(`${API_URL}/ask`, {
@@ -224,43 +215,27 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify({ question })
       });
 
-      if (!response.ok) {
-        throw new Error("API error");
-      }
+      console.log("HTTP Status:", response.status);
 
       const data = await response.json();
-      thinking.remove();
+      console.log("Response:", data);
 
-      chatBox.innerHTML += `
-        <div class="message bot-message">
-          <div class="message-content">${escapeHtml(data.answer)}</div>
-        </div>
-      `;
-      chatBox.scrollTop = chatBox.scrollHeight;
+      chatBox.innerHTML += `<div><b>Bot:</b> ${escapeHtml(data.answer)}</div>`;
 
-    } catch (error) {
-      thinking.remove();
-      chatBox.innerHTML += `
-        <div class="message bot-message">
-          <div class="message-content">
-            Server is not responding. Please try again.
-          </div>
-        </div>
-      `;
+    } catch (err) {
+      console.error("FETCH ERROR:", err);
+      chatBox.innerHTML += `<div><b>Bot:</b> Server is not responding. Please try again.</div>`;
     }
   });
 });
 
 function escapeHtml(text) {
-  return text.replace(/[&<>"']/g, function (m) {
-    return {
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#039;"
-    }[m];
-  });
+  return text.replace(/[&<>"']/g, m => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[m]);
 }
-
 
